@@ -1,0 +1,28 @@
+mydata <- read.csv (file= "/Users/KingsShubo/Desktop/refine.csv")
+installed.packages("dplyr")
+suppressMessages(library(dplyr))
+region_used <- tbl_df(mydata)
+View(region_used)
+###deal with spelling & convert to lower cases###
+region_used$company <- tolower(region_used$company)
+region_used$company[1:6] <- c("phillips","phillips","phillips","phillips","phillips","phillips")
+region_used$company[14:16] <- c("phillips","phillips","phillips")
+region_used$company[7:13] <- c("akzo","akzo","akzo","akzo","akzo","akzo","akzo")
+region_used$company[22:25] <- c("unilever","unilever","unilever","unilever")
+###product code and number###
+library(tidyr)
+region_new<-separate(region_used,Product.code...number,c("product_code","product_number"), sep= "-")
+cate <- c(p="Smartphone",v="TV",x="Laptop",q="Tablet")
+region_new <- mutate(region_new, product_cate= cate[product_code])
+###address for geocoding###
+region_new <- unite(region_new, "full_address", address, city, country, sep=",")
+###dummy###
+region_new$phillips = ifelse(region_new$company == "phillips", 1,0)
+region_new$akzo = ifelse(region_new$company == "akzo", 1,0)
+region_new$van_houten= ifelse(region_new$company == "van houten", 1,0)
+region_new$unilever= ifelse(region_new$company == "unilever", 1,0)
+region_new$product_smartphone= ifelse(region_new$product_code == "p", 1,0)
+region_new$product_tv= ifelse(region_new$product_code == "v", 1,0)
+region_new$product_laptop= ifelse(region_new$product_code == "x", 1,0)
+region_new$product_Tablet= ifelse(region_new$product_code == "q", 1,0)
+write.csv(region_new,"/Users/KingsShubo/Desktop/refine_clean.csv")
