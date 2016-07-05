@@ -1,0 +1,23 @@
+###import data###
+titanic_original <- read.csv("/Users/KingsShubo/Desktop/titanic_original.csv")
+installed.packages("dplyr")
+suppressMessages(library(dplyr))
+titanic <- tbl_df(titanic_original)
+###missing values###
+titanic$embarked[is.na(titanic$embarked)] <- "S"
+titanic$embarked[titanic$embarked== ""]<- "S"
+####age###
+Aveg_age <- mean(titanic$age,na.rm= TRUE)
+Med_age <- median(titanic$age,na.rm= TRUE)
+titanic$age[is.na(titanic$age)] <- Aveg_age
+titanic$age[titanic$age== ""]<- Aveg_age
+summary(titanic)
+##alternative###
+Med_age <- median(titanic$age,na.rm= TRUE)
+####lifeboat###
+titanic$boat[titanic$boat== ""]<- NA
+####cabin###
+titanic$cabin[titanic$cabin== ""]<- NA
+titanic$has_cabin_number = ifelse(!is.na(titanic$cabin),1,0)
+###submit###
+write.csv(titanic,"/Users/KingsShubo/Desktop/titanic_new.csv")
